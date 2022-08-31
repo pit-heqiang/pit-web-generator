@@ -8,6 +8,7 @@ const getConnection = require('./common/connection');
 function activate(context) {
 
 	let disposable = vscode.commands.registerCommand('pit-web-generator.webGenerator', () => {
+		const webGeneratorConfig = vscode.workspace.getConfiguration().get('pit-web-generator.webGeneratorConfig') || {};
 		const panel = vscode.window.createWebviewPanel(
 			'pit-web-generator',
 			'pit-web-generator',
@@ -60,6 +61,7 @@ function activate(context) {
 			undefined,
 			context.subscriptions
 		);
+		webPostMessage('webGeneratorConfig', panel.webview, webGeneratorConfig)
 	});
 
 	context.subscriptions.push(disposable);

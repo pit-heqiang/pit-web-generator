@@ -137,10 +137,10 @@ export default {
   data() {
     return {
       formData: {
-        host: 'localhost',
-        port: '3306',
-        user: 'root',
-        password: 'root'
+        host: '',
+        port: '',
+        user: '',
+        password: ''
       },
       generateForm: {
         path: '',
@@ -156,16 +156,7 @@ export default {
         dataBase: '',
         tableName: ''
       },
-      componentList: [
-        {
-          value: 'input',
-          label: '输入框'
-        },
-        {
-          value: 'select',
-          label: '下拉框'
-        }
-      ],
+      componentList: [],
       formRules: {
         dataBase: { required: true, message: '数据库不能为空', trigger: ["change", 'blur'] },
         tableName: { required: true, message: '表不能为空', trigger: ["change", 'blur'] },
@@ -189,6 +180,11 @@ export default {
     _this.vscodeApi = acquireVsCodeApi && acquireVsCodeApi();
     window.addEventListener('message', function (res) {
       switch (res.data.command) {
+        case 'webGeneratorConfig':
+          let obj = _.get(res, 'data.data', {});
+          Object.assign(_this.formData, _.get(obj, 'connect', {}));
+          _this.componentList = _.get(obj, 'componentList', []);
+          break;
         case 'getDataBases':
           _this.dataBases = res.data.data;
           break;

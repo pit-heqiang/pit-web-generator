@@ -3,7 +3,7 @@
   "displayName": "pit-web-generator",
   "description": "pit-web-generator",
   "publisher": "heqiang",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -19,6 +19,27 @@
       {
         "command": "pit-web-generator.webGenerator",
         "title": "webGenerator"
+      }
+    ],
+    "configuration": [
+      {
+        "type": "object",
+        "title": "pit-web-generator.webGeneratorConfig configuration",
+        "properties": {
+          "pit-web-generator.webGeneratorConfig": {
+            "type": "object",
+            "default": {
+              "connect": {
+                "host": "",
+                "port": "",
+                "user": "",
+                "password": ""
+              },
+              "componentList": []
+            },
+            "description": "pit-web-generator.webGeneratorConfig configuration."
+          }
+        }
       }
     ]
   },
