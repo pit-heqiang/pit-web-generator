@@ -1,0 +1,124 @@
+<%# copyright 前端生成器模板 -%>
+<%# '左侧树标题': '左侧树标题', '主键': '主键', '查询接口','查询详情接口', '必填字段(用逗号隔开)' -%>
+<%_ function getKey(key) { return kdata.filter(v => v.key === key)[0].value } -%>
+<template>
+  <div class="h-full">
+    <el-form-base
+      ref="peFormBase"
+      primary-key="<%=getKey('主键') %>"
+      query-interface="<%=getKey('查询接口') %>"
+      query-one-interface="<%=getKey('查询详情接口') %>"
+      save-interface="<%=getKey('保存接口') %>"
+      update-interface="<%=getKey('修改接口') %>"
+      delete-interface="<%=getKey('删除接口') %>"
+      :form-inline="formInline"
+      :columns="columns"
+      :add-form="addForm"
+      :rules="rules"
+    >
+      <template slot="searchForm" slot-scope="data">
+    <%_ searchList.forEach(function(data) { -%>
+        <el-form-item label="<%=data.Comment %>" prop="<%=_.camelCase(data.Field) %>">
+          <%_ if(!data.component || data.component === 'input') { -%>
+            <el-input v-model="data.formInline.<%=_.camelCase(data.Field) %>" placeholder="请输入<%=data.Comment %>" clearable/>
+          <%_ }-%>
+          <%_ if(data.component === 'select') { -%>
+            <dictionary :code="<%=_.camelCase(data.Field) %>" v-model="data.addForm.<%=_.camelCase(data.Field) %>"/>
+          <%_ }-%>
+        </el-form-item>
+    <%_ });-%>
+      </template>
+      <template slot="add" slot-scope="data">
+    <%_ insertList.forEach(function(data) { -%>
+        <el-form-item label="<%=data.Comment %>" prop="<%=_.camelCase(data.Field) %>">
+        <%_ if(data.component === 'input') { -%>
+          <el-input v-model="data.addForm.<%=_.camelCase(data.Field) %>" placeholder="请输入<%=data.Comment %>" clearable/>
+        <%_ }-%>
+        <%_ if(data.component === 'select') { -%>
+          <dictionary :code="<%=_.camelCase(data.Field) %>" v-model="data.addForm.<%=_.camelCase(data.Field) %>"/>
+        <%_ }-%>
+        <%_ if(data.component === 'tree') { -%>
+          <pe-select-tree
+            v-model="data.addForm.<%=_.camelCase(data.Field) %>"
+            :options="dataListData"
+            placeholder="选择<%=data.Comment %>"
+          />
+        <%_ }-%>
+        <%_ if(data.component === 'number') { -%>
+          <el-input-number v-model="data.addForm.<%=_.camelCase(data.Field) %>" :min="0" :max="9999" />
+        <%_ }-%>
+        <%_ if(data.component === 'textarea') { -%>
+          <el-input v-model="data.addForm.<%=_.camelCase(data.Field) %>" type="textarea" :rows="6" />
+        <%_ }-%>
+        <%_ if(!data.component) { -%>
+          <el-input v-model="data.addForm.<%=_.camelCase(data.Field) %>" placeholder="请输入<%=data.Comment %>" clearable/>
+        <%_ }-%>
+        </el-form-item>
+    <%_ });-%>
+      </template>
+    </el-form-base>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Department',
+  data() {
+    return {
+      columns: [
+      <%_ queryList.forEach(function(data) { -%>
+        {
+          prop: '<%=_.camelCase(data.Field) %>',
+          label: '<%=data.Comment %>',
+          align: 'left'
+        },
+      <%_ }); -%>
+        {
+          prop: '',
+          label: '操作',
+          align: 'center',
+          width: 160,
+          render: (params) => (
+            <div>
+              <a
+                onClick={() => this.$refs.peFormBase.info(params["<%=getKey('主键') %>"])}
+                class='text-primary mr-2'
+              >
+                编辑
+              </a>
+              <a
+                onClick={() => this.$refs.peFormBase.delete(params["<%=getKey('主键') %>"])}
+                class='text-danger mr-2'
+              >
+                删除
+              </a>
+            </div>
+          )
+        }
+      ],
+      formInline: {
+      <%_ searchList.forEach(function(data) { -%>
+        <%=_.camelCase(data.Field) %>: '',
+      <%_ });-%>
+      },
+      addForm: {
+      <%_ insertList.forEach(function(data) { -%>
+        <%=_.camelCase(data.Field) %>: '',
+      <%_ });-%>
+      },
+      rules: {
+     <%_ requiredList.forEach(function(data) { -%>
+        <%=_.camelCase(data.Field) %>: [
+          { required: true, message: '请输入<%=data.Comment %>', trigger: 'input' }
+        ],
+        <%_ }); -%>
+      }
+    }
+  },
+  methods: {
+
+  }
+}
+</script>
+
+<style scoped></style>
