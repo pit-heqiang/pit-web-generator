@@ -3,16 +3,17 @@
     <div class="app-header">
       <el-form :inline="true" class="app-header-form" ref="formInline" :rules="formRules" :model="formInline">
         <el-form-item>
-          <el-button type="primary" @click="dialogVisible=true">连接MYSQL数据库</el-button>
+          <el-button type="primary" @click="dialogVisible = true;isConnect=false" style="margin-right: 15px;">切换MYSQL
+          </el-button>
         </el-form-item>
         <el-form-item label="数据库" prop="dataBase">
-          <el-select v-model="formInline.dataBase" @change="handleDatabase" placeholder="请选择数据库">
+          <el-select v-model="formInline.dataBase" filterable @change="handleDatabase" placeholder="请选择数据库">
             <el-option v-for="item in dataBases" :key="item.Database" :value="item.Database" :label="item.Database">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="表" prop="tableName">
-          <el-select v-model="formInline.tableName" multiple placeholder="请选择表">
+          <el-select v-model="formInline.tableName" filterable multiple placeholder="请选择表">
             <el-option v-for="item in tableNameArr" :key="item.TABLE_NAME" :value="item.TABLE_NAME"
               :label="item.TABLE_NAME">
             </el-option>
@@ -85,8 +86,8 @@
         </el-table>
       </div>
     </div>
-    <el-dialog title="连接MYSQL数据库" :close-on-click-modal="false" :visible.sync="dialogVisible" v-if="dialogVisible"
-      width="30%" :before-close="handleClose">
+    <el-dialog :title="isConnect ? '连接MYSQL' : '切换MYSQL'" :show-close="!isConnect" :close-on-click-modal="false"
+      :visible.sync="dialogVisible" v-if="dialogVisible" width="30%" :before-close="handleClose">
       <el-form :model="formData" :rules="rules" ref="formData" label-width="100px">
         <el-form-item label="host" prop="host">
           <el-input v-model="formData.host"></el-input>
@@ -102,12 +103,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
+        <el-button @click="handleClose" v-if="!isConnect">取 消</el-button>
         <el-button type="primary" @click="handleClick">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="生成模板" :close-on-click-modal="false" :visible.sync="generateVisible" v-if="generateVisible"
-      width="30%" :before-close="handleGenerateClose">
+      width="40%" :before-close="handleGenerateClose">
       <el-form :model="generateForm" :rules="generateRules" ref="generateForm" label-width="140px">
         <el-form-item label="生成文件的模板" prop="templateFile">
           <el-input v-model="generateForm.templateFile" readonly
@@ -123,6 +124,11 @@
         <el-form-item label="生成文件的名称" prop="fileName">
           <el-input v-model="generateForm.fileName" placeholder="请输入文件名称(*.vue)"></el-input>
         </el-form-item>
+        <el-form-item label="其它配置">
+          <span class="other-config-tip">(只能在默认配置上新增配置不能删除默认配置，属性没有值就为空字符串)</span>
+          <vue-json-editor class="json-editor" @has-error="isJosn = false" v-model="otherConfig"
+            @json-change="isJosn = true" :showBtns="false" :mode="'code'" />
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleGenerateClose">取 消</el-button>
@@ -132,20 +138,36 @@
   </div>
 </template>
 <script>
-import _ from 'lodash'
+import vueJsonEditor from 'vue-json-editor';
+import _ from 'lodash';
 export default {
+  components: {
+    vueJsonEditor
+  },
   data() {
     return {
+      isJosn: true,
+      isConnect: true,
       formData: {
         host: '',
         port: '',
         user: '',
         password: ''
       },
+      otherConfig: {
+        "左侧树标题": "",
+        "树接口": "",
+        "主键": "",
+        "查询接口": "",
+        "查询详情接口": "",
+        "保存接口": "",
+        "修改接口": "",
+        "删除接口": ""
+      },
       generateForm: {
         path: '',
         fileName: '',
-        templateFile: ''
+        templateFile: '',
       },
       generateRules: {
         path: { required: true, message: '指定文件夹不能为空', trigger: ["change", 'blur'] },
@@ -187,9 +209,9 @@ export default {
           break;
         case 'getDataBases':
           _this.dataBases = res.data.data;
+          _this.handleClose();
           break;
         case 'getTableName':
-          console.log('tableNameArr', _this.tableNameArr);
           _this.tableNameArr = res.data.data;
           break;
         case 'getTableColumn':
@@ -205,7 +227,6 @@ export default {
           _this.handleTip(res.data.data);
           break;
       }
-      console.log(res)
     })
   },
   methods: {
@@ -219,6 +240,9 @@ export default {
     handleGenerateSubmit() {
       this.$refs['generateForm'].validate((valid) => {
         if (valid) {
+          if (!this.isJosn) {
+            return this.$message.warning("JSON格式有误")
+          }
           this.vsPossMessage('createAFile', {
             generateForm: this.generateForm,
             data: this.getTemplateData()
@@ -229,29 +253,17 @@ export default {
     },
     getTemplateData() {
       let data = {
-        kdata: [{
-          key: '主键',
-          value: 'id'
-        }, {
-          key: '查询接口',
-          value: '/api/system/query'
-        }, {
-          key: '查询详情接口',
-          value: '/api/system/info'
-        }, {
-          key: '保存接口',
-          value: '/api/system/save'
-        }, {
-          key: '修改接口',
-          value: '/api/system/update'
-        }, {
-          key: '删除接口',
-          value: '/api/system/delete'
-        }],
+        kdata: [],
         queryList: [], // 表格列
         searchList: [], // 搜索条件
         insertList: [], // 新增
         requiredList: [] // 是否必填
+      }
+      for (let key in this.otherConfig) {
+        data.kdata.push({
+          key,
+          value: this.otherConfig[key]
+        })
       }
       this.tableData.map(item => {
         if (item.primaryKey == '是') {
@@ -320,8 +332,16 @@ export default {
     handleClick() {
       this.$refs['formData'].validate((valid) => {
         if (valid) {
+          if (!this.isConnect) {
+            this.dataBases = [];
+            this.tableNameArr = [];
+            this.tableData = [];
+            Object.assign(this.formInline, {
+              dataBase: '',
+              tableName: ''
+            })
+          }
           this.vsPossMessage('getConnection', this.formData);
-          this.handleClose();
         }
       })
     },
@@ -361,6 +381,10 @@ export default {
     .app-body-table {
       height: calc(100% - 52px);
     }
+  }
+  .other-config-tip {
+    font-size: 12px;
+    color: red;
   }
 }
 </style>
