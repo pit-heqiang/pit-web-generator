@@ -241,7 +241,7 @@ export default {
       this.$refs['generateForm'].validate((valid) => {
         if (valid) {
           if (!this.isJosn) {
-            return this.$message.warning("JSON格式有误")
+            return this.$message.warning("其它配置JSON格式有误");
           }
           this.vsPossMessage('createAFile', {
             generateForm: this.generateForm,
