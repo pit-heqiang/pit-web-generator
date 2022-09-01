@@ -42,7 +42,7 @@ class Mysql {
    * @param dataBase 
    */
   getTableName(dataBase, callBack) {
-    let sql = `select table_name from information_schema.tables where table_schema='${dataBase}'`;
+    let sql = `select table_name as tableName from information_schema.tables where table_schema='${dataBase}'`;
     this.query(sql, callBack, '获取数据库表名称');
   }
 

@@ -13,9 +13,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="表" prop="tableName">
-          <el-select v-model="formInline.tableName" filterable multiple placeholder="请选择表">
-            <el-option v-for="item in tableNameArr" :key="item.TABLE_NAME" :value="item.TABLE_NAME"
-              :label="item.TABLE_NAME">
+          <el-select v-model="formInline.tableName" filterable multiple collapse-tags placeholder="请选择表">
+            <el-option v-for="item in tableNameArr" :key="item.tableName" :value="item.tableName"
+              :label="item.tableName">
             </el-option>
           </el-select>
         </el-form-item>
