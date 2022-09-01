@@ -3,7 +3,9 @@ const mysql = require('mysql');
 class Mysql {
   /**
    * 初始化连接池
-   * @param config 
+   * @param {*} config 
+   * @param {*} webview 
+   * @param {*} callBack 
    */
   constructor(config, webview, callBack) {
     this.isConnect = false;
@@ -15,7 +17,7 @@ class Mysql {
         command: 'tips',
         data: { type: err ? 'error' : 'success', message: err ? '连接失败' : '连接成功' }
       });
-      this.isConnect && callBack(err);
+      this.isConnect && callBack && callBack(err);
     });
     this.connection = connection;
   }

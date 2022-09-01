@@ -4,9 +4,11 @@ const fs = require('fs');
 const ejs = require('ejs');
 const getConnection = require('./common/connection');
 
-
+/**
+ *  vsce package打包 会打包package.json dependencies 下的插件
+ * @param {*} context 
+ */
 function activate(context) {
-
 	let disposable = vscode.commands.registerCommand('pit-web-generator.webGenerator', () => {
 		const webGeneratorConfig = vscode.workspace.getConfiguration().get('pit-web-generator.webGeneratorConfig') || {};
 		const panel = vscode.window.createWebviewPanel(
@@ -61,7 +63,7 @@ function activate(context) {
 			undefined,
 			context.subscriptions
 		);
-		webPostMessage('webGeneratorConfig', panel.webview, webGeneratorConfig)
+		webPostMessage('webGeneratorConfig', panel.webview, webGeneratorConfig);
 	});
 
 	context.subscriptions.push(disposable);
