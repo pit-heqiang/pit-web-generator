@@ -12,4 +12,4 @@ ejs
 node_modules
 extension.js
 common
-vsc-extension-quickstart
+out/build.js.map
