@@ -3,7 +3,7 @@
   "displayName": "pit-web-generator",
   "description": "pit-web-generator",
   "publisher": "heqiang",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -13,7 +13,7 @@
   "activationEvents": [
     "onCommand:pit-web-generator.webGenerator"
   ],
-  "main": "./extension.js",
+  "main": "./out/build.js",
   "contributes": {
     "commands": [
       {
@@ -46,7 +46,10 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "node ./test/runTest.js"
+    "test": "node ./test/runTest.js",
+    "esbuild-base": "esbuild extension.js --bundle --outfile=out/build.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
@@ -54,6 +57,7 @@
     "@types/node": "16.x",
     "@types/vscode": "^1.70.0",
     "@vscode/test-electron": "^2.1.5",
+    "esbuild": "^0.15.8",
     "eslint": "^8.20.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
