@@ -3,7 +3,7 @@
   "displayName": "pit-web-generator",
   "description": "pit-web-generator",
   "publisher": "heqiang",
-  "version": "1.0.9",
+  "version": "2.0.0",
   "engines": {
     "vscode": "^1.70.0"
   },
