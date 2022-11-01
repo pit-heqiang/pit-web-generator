@@ -3,7 +3,7 @@
   "displayName": "pit-web-generator",
   "description": "pit-web-generator",
   "publisher": "heqiang",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "engines": {
     "vscode": "^1.70.0"
   },
@@ -29,6 +29,7 @@
           "pit-web-generator.webGeneratorConfig": {
             "type": "object",
             "default": {
+              "hideData": [],
               "connect": {
                 "host": "",
                 "port": "",

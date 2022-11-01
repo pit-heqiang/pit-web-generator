@@ -410,6 +410,7 @@ export default {
       dataBases: [],
       tableNameArr: [],
       tableData: [],
+      hideData: [],
     };
   },
   mounted() {
@@ -421,6 +422,7 @@ export default {
           let obj = _.get(res, "data.data", {});
           Object.assign(_this.formData, _.get(obj, "connect", {}));
           _this.componentList = _.get(obj, "componentList", []);
+          _this.hideData = _.get(obj, "hideData", []);
           break;
         case "getDataBases":
           _this.dataBases = res.data.data;
@@ -528,16 +530,18 @@ export default {
     },
     handleTableData(data) {
       this.tableData = (data || []).map((item) => {
-        return {
-          Field: item.Field,
-          Comment: item.label,
-          primaryKey: item.primaryKey,
-          component: "",
-          addForm: 0,
-          searchForm: 0,
-          queryForm: 0,
-          isRequired: 0,
-        };
+        if (!this.hideData.includes(this.camelCase(item.Field))) {
+          return {
+            Field: item.Field,
+            Comment: item.label,
+            primaryKey: item.primaryKey,
+            component: "",
+            addForm: 0,
+            searchForm: 0,
+            queryForm: 0,
+            isRequired: 0,
+          };
+        }
       });
     },
     handleDatabase(val) {
