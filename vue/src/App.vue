@@ -99,6 +99,16 @@
           border
           style="width: 100%; height: 100%"
         >
+          <el-table-column align="center" width="80" label="操作">
+            <template slot-scope="scope">
+              <el-button
+                type="danger"
+                size="mini"
+                @click="handleDelete(scope.$index)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
           <el-table-column type="index" label="序号" align="center" width="55">
           </el-table-column>
           <el-table-column prop="Field" align="center" label="字段">
@@ -133,6 +143,7 @@
               <el-select
                 size="small"
                 v-model="scope.row.component"
+                filterable
                 placeholder="请选择组件"
               >
                 <el-option
@@ -508,6 +519,9 @@ export default {
             : 1;
         this.$set(item, Field, item[Field + "State"]);
       });
+    },
+    handleDelete(i) {
+      this.tableData.splice(i, 1);
     },
     handleTip(data) {
       this.$message({ showClose: true, duration: 1500, offset: 80, ...data });
