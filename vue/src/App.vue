@@ -493,7 +493,6 @@ export default {
         item.searchForm && data.searchList.push(item);
         item.isRequired && data.requiredList.push(item);
       });
-      console.log(data);
       return data;
     },
     handleGenerate() {
@@ -529,8 +528,8 @@ export default {
       this.$message({ showClose: true, duration: 1500, offset: 80, ...data });
     },
     handleTableData(data) {
-      this.tableData = (data || []).map((item) => {
-        if (!this.hideData.includes(this.camelCase(item.Field))) {
+      this.tableData = (data || [])
+        .map((item) => {
           return {
             Field: item.Field,
             Comment: item.label,
@@ -541,8 +540,8 @@ export default {
             queryForm: 0,
             isRequired: 0,
           };
-        }
-      });
+        })
+        .filter((item) => !this.hideData.includes(this.camelCase(item.Field)));
     },
     handleDatabase(val) {
       this.vsPossMessage("getTableName", val);
