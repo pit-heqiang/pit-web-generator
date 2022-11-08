@@ -5,7 +5,7 @@ const ejs = require("ejs");
 const getConnection = require("./common/connection");
 
 /**
- *  vsce package打包 会打包package.json dependencies 下的插件
+ * vsce package打包 会打包package.json dependencies 下的插件
  * @param {*} context
  */
 function activate(context) {
@@ -27,7 +27,11 @@ function activate(context) {
       );
       let connectionObj = null;
 
-      panel.webview.html = getWebViewContent(context, "./dist/index.html");
+      panel.webview.html = getWebViewContent(
+        context,
+        "./dist/index.html",
+        panel.webview
+      );
       panel.webview.onDidReceiveMessage(
         (res) => {
           switch (res.command) {
@@ -43,7 +47,6 @@ function activate(context) {
               break;
             case "getTableName":
               connectionObj.getTableName(res.data, (data) => {
-                console.log(data);
                 webPostMessage(res.command, panel.webview, data);
               });
               break;
@@ -86,7 +89,7 @@ function activate(context) {
  * @param templatePath
  * @returns
  */
-function getWebViewContent(context, templatePath) {
+function getWebViewContent(context, templatePath, webview) {
   const resourcePath = path.join(context.extensionPath, templatePath);
   const dirPath = path.dirname(resourcePath);
   let html = fs.readFileSync(resourcePath, "utf-8");
@@ -94,9 +97,7 @@ function getWebViewContent(context, templatePath) {
   html = html.replace(/(src="|href=")(.+?)"/g, (m, $1, $2) => {
     return (
       $1 +
-      vscode.Uri.file(path.resolve(dirPath, $2))
-        .with({ scheme: "vscode-resource" })
-        .toString() +
+      webview.asWebviewUri(vscode.Uri.file(path.resolve(dirPath, $2))) +
       '"'
     );
   });
