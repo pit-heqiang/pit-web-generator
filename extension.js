@@ -60,7 +60,12 @@ function activate(context) {
               );
               break;
             case "getTemplateUrl":
-              showOpenFileDialog(panel.webview, res.command, res.data);
+              showOpenFileDialog(
+                panel.webview,
+                res.command,
+                res.data,
+                webGeneratorConfig
+              );
               break;
             case "getFolderUrl":
               showOpenFileDialog(panel.webview, res.command, {});
@@ -145,13 +150,15 @@ const createAFile = (res, webview) => {
  * @param {*} command
  * @param {*} obj
  */
-const showOpenFileDialog = (webview, command, obj) => {
+const showOpenFileDialog = (webview, command, obj, webGeneratorConfig = {}) => {
   let options = Object.assign(
     {
       canSelectFiles: false, //是否可选择文件
       canSelectFolders: true, //是否可选择目录
       canSelectMany: false, //是否可多选
-      defaultUri: vscode.Uri.file("D:/VScode"), //默认打开的文件夹
+      defaultUri: vscode.Uri.file(
+        webGeneratorConfig.templateUrl || "D:/VScode"
+      ), //默认打开的文件夹
       openLabel: "选择文件夹",
     },
     obj
